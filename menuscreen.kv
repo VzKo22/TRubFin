@@ -1,0 +1,15 @@
+<MenuScreen>:
+    FloatLayout:
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (0.5, 0.2)
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 10
+
+            Button:
+                text: "Manual Input"
+                on_press: root.open_manual()
+
+            Button:
+                text: "Scanner"
+                on_press: root.open_scanner()

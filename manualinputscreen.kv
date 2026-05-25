@@ -1,0 +1,39 @@
+<ManualInputScreen>:
+    palette_layout: palette_layout
+    net_layout: net_layout
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 15
+
+        # 1. TOP PALETTE ZONE
+        BoxLayout:
+            id: palette_layout
+            orientation: 'horizontal'
+            size_hint: (1, 0.15)
+            spacing: 10
+
+        # 2. MIDDLE NET ZONE
+        GridLayout:
+            id: net_layout
+            size_hint: (1, 0.70)
+            spacing: 2
+
+        # 3. BOTTOM BUTTONS ZONE
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.15)
+            spacing: 10
+
+            Button:
+                text: "Back"
+                on_press: root.back_btnF()
+
+            Button:
+                text: "Reset Cube"
+                on_press: root.reset_cube()
+
+            Button:
+                text: "Continue To Solver"
+                on_press: root.continue_to_solver()

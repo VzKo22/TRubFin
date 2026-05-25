@@ -1,0 +1,62 @@
+<ScanCube>:
+    img: img
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        # ---------------------------
+        # TOP NAVIGATION HEADER BAR
+        # ---------------------------
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.08)
+            padding: [10, 5]
+
+            Button:
+                text: "<--"
+                font_size: '24sp'
+                size_hint_x: None
+                width: self.height
+                background_normal: ''
+                background_color: (0.2, 0.2, 0.2, 1)
+                on_press: root.back_to_menu()
+
+            Label:
+                text: "Camera Cube Scanner"
+                font_size: '18sp'
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+                padding: [10, 0]
+
+        # ---------------------------
+        # DISPLAY CAMERA VIEW STREAM (Shrunk down slightly for header space)
+        # ---------------------------
+        Image:
+            id: img
+            size_hint: (1, 0.77)
+
+        # ---------------------------
+        # BOTTOM CONTROLS BAR
+        # ---------------------------
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.15
+            spacing: 10
+            padding: 10
+
+            Button:
+                text: "Back"
+                on_press: root.go_back_face()
+
+            Button:
+                text: "Redo"
+                on_press: root.redo_face()
+
+            Button:
+                text: "Capture"
+                on_press: root.capture_face()
+
+            Button:
+                text: "Next"
+                on_press: root.next_face()
