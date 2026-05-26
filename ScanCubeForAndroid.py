@@ -6,6 +6,10 @@ from kivy.graphics.texture import Texture
 from kivy.uix.camera import Camera
 from kivy.uix.screenmanager import Screen
 from kivy.properties import ObjectProperty
+from kivy.utils import platform
+
+if platform == 'android':
+    from android.permissions import Permission, request_permissions, check_permission
 
 
 def detect_color(hsv):
@@ -26,19 +30,13 @@ def detect_color(hsv):
 
 
 class ScanCube(Screen):
-    # Establish a formal link to the image container defined in KV
     img = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # CAMERA (Instantiated and kept strictly in memory for context textures)
-        self.camera = Camera(
-            play=True,
-            resolution=(1280, 720),
-            size_hint=(0.75, 0.75),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
-        )
+        # Initialize camera as None. We only build it when permissions are ready.
+        self.camera = None
 
         # STATE DATA
         self.scan_order = ['U', 'R', 'F', 'D', 'L', 'B']
@@ -58,22 +56,75 @@ class ScanCube(Screen):
         self.face_captured = False
 
     def on_enter(self):
+
+        self.current_face_index = 0
+        self.current_face_data = None
+        self.captured_faces = {}
+        self.face_captured = False
+
+        """Triggered when entering the scanning screen."""
+        if platform == 'android':
+            # Check if permission is already granted
+            if check_permission(Permission.CAMERA):
+                self.start_camera_stream()
+            else:
+                # Ask user for permission dynamically
+                request_permissions([Permission.CAMERA], self.permission_callback)
+        else:
+            # Desktop environments (Windows/macOS/Linux) don't need runtime prompts
+            self.start_camera_stream()
+
+    def permission_callback(self, permissions, grants):
+        """Callback that handles the user's response to the permission prompt."""
+        if Permission.CAMERA in permissions and grants[0]:
+            self.start_camera_stream()
+        else:
+            print("Camera permission denied by user.")
+            # Optional: Redirect them back to menu if they refuse
+            Clock.schedule_once(lambda dt: self.back_to_menu(), 0.5)
+
+    def start_camera_stream(self):
+        """Safely instantiates and starts the camera hardware."""
+        if not self.camera:
+            self.camera = Camera(
+                play=False,
+                resolution=(1280, 720),
+                size_hint=(1, 1),
+                pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            )
+
         self.camera.play = True
         Clock.unschedule(self.update)
         Clock.schedule_interval(self.update, 1 / 30)
 
-    def on_leave(self):
+    def stop_camera_stream(self):
         Clock.unschedule(self.update)
-        self.camera.play = False
+
+        if self.camera:
+            self.camera.play = False
+
+            if hasattr(self.camera, '_camera'):
+                if self.camera._camera:
+                    self.camera._camera.stop()
+                    self.camera._camera = None
+
+            self.camera = None
+
+        if self.img:
+            self.img.texture = None
+
+    def on_leave(self):
+        self.stop_camera_stream()
 
     def update(self, _dt):
         if self.current_face_index >= len(self.scan_order):
             return
 
-        texture = self.camera.texture
-        if texture is None:
+        # Double check that camera exists and has populated a texture frame
+        if not self.camera or self.camera.texture is None:
             return
 
+        texture = self.camera.texture
         size = texture.size
         pixels = texture.pixels
 
@@ -92,8 +143,10 @@ class ScanCube(Screen):
 
         # DRAW MATRIX LINES
         for i in range(4):
-            cv2.line(frame, (start_x + i * cell, start_y), (start_x + i * cell, start_y + size_grid), (255, 255, 255), 2)
-            cv2.line(frame, (start_x, start_y + i * cell), (start_x + size_grid, start_y + i * cell), (255, 255, 255), 2)
+            cv2.line(frame, (start_x + i * cell, start_y), (start_x + i * cell, start_y + size_grid), (255, 255, 255),
+                     2)
+            cv2.line(frame, (start_x, start_y + i * cell), (start_x + size_grid, start_y + i * cell), (255, 255, 255),
+                     2)
 
         face = self.scan_order[self.current_face_index]
         cv2.putText(frame, f"Scan Face: {face}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
@@ -132,7 +185,6 @@ class ScanCube(Screen):
         texture_out = Texture.create(size=(w, h), colorfmt='rgb')
         texture_out.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
 
-        # Push the fresh openCV texture calculation into our KV layout image placeholder
         if self.img:
             self.img.texture = texture_out
 
@@ -174,6 +226,7 @@ class ScanCube(Screen):
         self.face_captured = (face in self.captured_faces)
 
     def back_to_menu(self):
+        self.stop_camera_stream()
+
         if self.parent:
             self.parent.current = 'menu'
-

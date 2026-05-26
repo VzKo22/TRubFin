@@ -1,10 +1,12 @@
 from collections import Counter
 
+from kivy.graphics import Color, Rectangle
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
 from kivy.clock import Clock
+from kivy.uix.label import Label
 
 
 def is_valid_cube_string(s):
@@ -167,13 +169,33 @@ class ManualInputScreen(Screen):
                 cube_string += ''.join(row)
         return cube_string
 
+    def show_toast(self, message, duration=3):
+        toast = Label(
+            text=message,
+            font_size="24sp",
+            bold=True,
+            color=(1, 1, 1, 1),
+            size_hint=(1, 0.2),
+            pos_hint={"center_x": 0.5, "y": 0.5}
+        )
+
+        with toast.canvas.before:
+            Color(0, 0, 0, 0.7)
+            toast.bg = Rectangle(pos=toast.pos, size=toast.size)
+
+        toast.bind(pos=lambda *a: setattr(toast.bg, "pos", toast.pos),
+                   size=lambda *a: setattr(toast.bg, "size", toast.size))
+
+        self.add_widget(toast)
+
+        Clock.schedule_once(lambda dt: self.remove_widget(toast), duration)
+
     def continue_to_solver(self):
         cube_string = self.generate_cube_string()
         valid, msg = is_valid_cube_string(cube_string)
 
-        print(cube_string)
         if not valid:
-            print("ERROR:", msg)
+            self.show_toast(msg)
             return
 
         # 1. Grab the CubeGUI screen directly from the manager

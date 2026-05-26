@@ -102,7 +102,15 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
             self.back_move_btn.disabled = True
             return
         else:
-            self.solution = kociemba.solve(self.cube.to_kociemba_string()).split()
+            try:
+                self.solution = kociemba.solve(self.cube.to_kociemba_string()).split()
+            except ValueError as err:
+                manual_screen = self.manager.get_screen('manual')
+                manual_screen.show_toast(str(err))
+                self.manager.current = 'manual'
+                self.solve_btn.disabled = False
+                return
+
             self.solution_label.text = f"Solution(Total {len(self.solution)} moves): " + " ".join(self.solution)
             if self.solution:
                 self.index = 0
@@ -148,6 +156,7 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
         if self.back_move_btn:
             self.back_move_btn.disabled = True
         if self.manager:
+            self.solve_btn.disabled = False
             self.manager.current = 'menu'
 
     def draw_cube(self, move=None):
