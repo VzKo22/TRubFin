@@ -34,7 +34,8 @@
         # ---------------------------
         Image:
             id: img
-            size_hint: (1, 1)
+            allow_stretch: True
+            keep_ratio: True
 
         # ---------------------------
         # BOTTOM CONTROLS BAR
@@ -47,10 +48,12 @@
 
             Button:
                 text: "Back"
+                disabled: root.current_face_index == 0 or root.face_captured
                 on_press: root.go_back_face()
 
             Button:
                 text: "Redo"
+                disabled: not root.face_captured
                 on_press: root.redo_face()
 
             Button:
@@ -59,4 +62,5 @@
 
             Button:
                 text: "Next"
+                disabled: not root.face_captured
                 on_press: root.next_face()
