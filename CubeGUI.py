@@ -6,6 +6,24 @@ from kivy.uix.screenmanager import Screen
 
 from RubiksCube import RubiksCube
 
+COLOR_MAP = {
+    'W': (1, 1, 1),
+    'Y': (1, 1, 0),
+    'G': (0, 1, 0),
+    'B': (0, 0, 1),
+    'O': (1, 0.5, 0),
+    'R': (1, 0, 0),
+}
+
+INVERSE_MOVES = {
+    "U": "U'", "U'": "U", "U2": "U2",
+    "D": "D'", "D'": "D", "D2": "D2",
+    "R": "R'", "R'": "R", "R2": "R2",
+    "L": "L'", "L'": "L", "L2": "L2",
+    "F": "F'", "F'": "F", "F2": "F2",
+    "B": "B'", "B'": "B", "B2": "B2",
+}
+
 
 def draw_arrow(points, direction, _size):
     x1, y1, x2, y2, x3, y3, x4, y4 = points
@@ -70,15 +88,6 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
         self.solution = []
         self.index = 0
 
-        self.inverse_moves = {
-            "U": "U'", "U'": "U", "U2": "U2",
-            "D": "D'", "D'": "D", "D2": "D2",
-            "R": "R'", "R'": "R", "R2": "R2",
-            "L": "L'", "L'": "L", "L2": "L2",
-            "F": "F'", "F'": "F", "F2": "F2",
-            "B": "B'", "B'": "B", "B2": "B2"
-        }
-
         if cube_string:
             self.cube = RubiksCube(cube_string)
         else:
@@ -141,7 +150,7 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
         if self.index > 0:
             self.index -= 1
             move = self.solution[self.index]
-            inverse_move = self.inverse_moves[move]
+            inverse_move = INVERSE_MOVES[move]
             self.cube.execute_move(inverse_move)
             self.draw_cube(move)
             self.solution_label.text = f"Move {self.index + 1}/{len(self.solution)}: {move}"
@@ -163,15 +172,6 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
         # CRITICAL GUARD: Stop code from running until Kivy maps the KV properties completely
         if not self.canvas_area:
             return
-
-        COLOR_MAP = {
-            'W': (1, 1, 1),
-            'Y': (1, 1, 0),
-            'G': (0, 1, 0),
-            'B': (0, 0, 1),
-            'O': (1, 0.5, 0),
-            'R': (1, 0, 0),
-        }
 
         # Clears older canvas elements clean on refresh
         self.canvas_area.canvas.clear()

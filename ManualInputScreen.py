@@ -8,6 +8,8 @@ from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.uix.label import Label
 
+from RubiksCube import RubiksCube
+
 
 def is_valid_cube_string(s):
     if len(s) != 54:
@@ -146,7 +148,7 @@ class ManualInputScreen(Screen):
         self.refresh_sticker_colors()
         self.selected_color = 'W'
 
-    def back_btnF(self):
+    def go_back(self):
         if self.parent:
             self.parent.current = 'menu'
 
@@ -202,7 +204,6 @@ class ManualInputScreen(Screen):
         cube_screen = self.manager.get_screen('cube')
 
         # 2. Update its internal RubiksCube object data with the new string
-        from RubiksCube import RubiksCube
         cube_screen.cube = RubiksCube(cube_string)
 
         # 3. Reset the move solution steps index

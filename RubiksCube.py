@@ -1,7 +1,5 @@
 class RubiksCube:
     def __init__(self, cubeState="WWWWWWWWWRRRRRRRRRGGGGGGGGGYYYYYYYYYOOOOOOOOOBBBBBBBBB"):
-        if len(cubeState) != 54:
-            print('Wrong input')
 
         self.startState = cubeState
         parts = [cubeState[i:i + 9] for i in range(0, 54, 9)]
@@ -24,19 +22,13 @@ class RubiksCube:
             'B': [['B'] * 3 for _ in range(3)],
         }
 
-        self.move_map = {
-            "R": self.R,
-            "R_prime": self.R_prime,
-            "L": self.L,
-            "L_prime": self.L_prime,
-            "U": self.U,
-            "U_prime": self.U_prime,
-            "F": self.F,
-            "F_prime": self.F_prime,
-            "D": self.D,
-            "D_prime": self.D_prime,
-            "B": self.B,
-            "B_prime": self.B_prime,
+        self._moves = {
+            'U': self.U, "U'": self.U_prime,
+            'D': self.D, "D'": self.D_prime,
+            'L': self.L, "L'": self.L_prime,
+            'R': self.R, "R'": self.R_prime,
+            'F': self.F, "F'": self.F_prime,
+            'B': self.B, "B'": self.B_prime,
         }
 
     def to_kociemba_string(self):
@@ -62,17 +54,14 @@ class RubiksCube:
         self.faces[face].reverse()
 
     # ---------- Moves -------------------
-    def move(self, m):
-        # move dictionary
-        moves = {
-            'U': self.U, "U'": self.U_prime,
-            'D': self.D, "D'": self.D_prime,
-            'L': self.L, "L'": self.L_prime,
-            'R': self.R, "R'": self.R_prime,
-            'F': self.F, "F'": self.F_prime,
-            'B': self.B, "B'": self.B_prime,
-        }
-        moves[m]()
+    def execute_move(self, move):
+        """Execute a standard notation move string: X, X', or X2."""
+        if move.endswith("2"):
+            base = move[0]
+            self._moves[base]()
+            self._moves[base]()
+        else:
+            self._moves[move]()
 
     # ---- U (Up) ----
     def U(self):
@@ -164,19 +153,3 @@ class RubiksCube:
     def B_prime(self):
         for _ in range(3):
             self.B()
-
-    def call_move(self, move):
-        self.move_map[move]()
-
-    def execute_move(self, move):
-        if move.endswith("2"):
-            base = move[0]
-            self.call_move(base)
-            self.call_move(base)
-
-        elif move.endswith("'"):
-            base = move[0]
-            self.call_move(base + "_prime")
-
-        else:
-            self.call_move(move)

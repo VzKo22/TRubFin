@@ -26,7 +26,7 @@ def detect_color(hsv):
         return 'G'
     if 85 < h <= 140:
         return 'B'
-    return '?'
+    return 'W'
 
 
 class ScanCube(Screen):
@@ -62,7 +62,6 @@ class ScanCube(Screen):
         self.captured_faces = {}
         self.face_captured = False
 
-        """Triggered when entering the scanning screen."""
         if platform == 'android':
             # Check if permission is already granted
             if check_permission(Permission.CAMERA):
@@ -90,8 +89,7 @@ class ScanCube(Screen):
 
         self.camera.play = True
         Clock.unschedule(self.update)
-        # Clock.schedule_interval(self.update, 1 / 30)
-        Clock.schedule_once(Clock.schedule_interval(self.update, 1 / 30), 0.05)
+        Clock.schedule_interval(self.update, 1 / 30)
 
     def stop_camera_stream(self):
         Clock.unschedule(self.update)
@@ -199,11 +197,14 @@ class ScanCube(Screen):
         manual.set_face(face, self.captured_faces[face])
 
         self.current_face_index += 1
-        self.face_captured = False
 
         if self.current_face_index >= len(self.scan_order):
             if self.manager:
                 self.manager.current = 'manual'
+            return
+
+        next_face = self.scan_order[self.current_face_index]
+        self.face_captured = (next_face in self.captured_faces)
 
     def redo_face(self):
         face = self.scan_order[self.current_face_index]

@@ -1,66 +1,150 @@
 <ScanCube>:
     img: img
 
+    canvas.before:
+        Color:
+            rgba: 0.05, 0.08, 0.15, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: 'vertical'
+        spacing: 8
+        padding: [0, 0]
 
-        # ---------------------------
-        # TOP NAVIGATION HEADER BAR
-        # ---------------------------
+        # HEADER BAR
         BoxLayout:
             orientation: 'horizontal'
             size_hint: (1, 0.08)
             padding: [10, 5]
+            spacing: 8
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.13, 0.25, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
 
             Button:
-                text: "<--"
-                font_size: '24sp'
+                text: "<"
+                font_size: '20sp'
+                bold: True
                 size_hint_x: None
                 width: self.height
                 background_normal: ''
-                background_color: (0.2, 0.2, 0.2, 1)
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.back_to_menu()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.35)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10]
 
             Label:
-                text: "Camera Cube Scanner"
+                text: "Camera Scanner"
                 font_size: '18sp'
+                bold: True
+                color: (0.85, 0.92, 1, 1)
                 halign: 'left'
                 valign: 'middle'
                 text_size: self.size
-                padding: [10, 0]
+                padding: [8, 0]
 
-        # ---------------------------
-        # DISPLAY CAMERA VIEW STREAM (Shrunk down slightly for header space)
-        # ---------------------------
+        # CAMERA VIEW
         Image:
             id: img
             allow_stretch: True
             keep_ratio: True
 
-        # ---------------------------
-        # BOTTOM CONTROLS BAR
-        # ---------------------------
+        # BOTTOM CONTROLS
         BoxLayout:
             orientation: 'horizontal'
-            size_hint_y: 0.15
-            spacing: 10
-            padding: 10
+            size_hint_y: 0.13
+            spacing: 8
+            padding: [10, 6]
 
             Button:
                 text: "Back"
-                disabled: root.current_face_index == 0 or root.face_captured
+                font_size: '13sp'
+                bold: True
+                disabled: root.current_face_index == 0
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.go_back_face()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2) if not self.disabled else (0.15, 0.15, 0.2, 0.4)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [16]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7) if not self.disabled else (0.25, 0.25, 0.3, 0.5)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 16]
+                        width: 1.1
 
             Button:
                 text: "Redo"
+                font_size: '13sp'
+                bold: True
                 disabled: not root.face_captured
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.redo_face()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2) if not self.disabled else (0.15, 0.15, 0.2, 0.4)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [16]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7) if not self.disabled else (0.25, 0.25, 0.3, 0.5)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 16]
+                        width: 1.1
 
             Button:
                 text: "Capture"
+                font_size: '13sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (1, 1, 1, 1)
                 on_press: root.capture_face()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [16]
 
             Button:
                 text: "Next"
+                font_size: '13sp'
+                bold: True
                 disabled: not root.face_captured
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.next_face()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2) if not self.disabled else (0.15, 0.15, 0.2, 0.4)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [16]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7) if not self.disabled else (0.25, 0.25, 0.3, 0.5)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 16]
+                        width: 1.1

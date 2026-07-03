@@ -2,38 +2,111 @@
     palette_layout: palette_layout
     net_layout: net_layout
 
+    canvas.before:
+        Color:
+            rgba: 0.05, 0.08, 0.15, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: 'vertical'
-        spacing: 15
-        padding: 15
+        spacing: 10
+        padding: [10, 10]
 
-        # 1. TOP PALETTE ZONE
+        # HEADER
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.07)
+            spacing: 8
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.13, 0.25, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [12]
+
+            Button:
+                text: "<"
+                font_size: '20sp'
+                bold: True
+                size_hint_x: None
+                width: self.height
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
+                on_press: root.go_back()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.35)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10]
+
+            Label:
+                text: "Manual Input"
+                font_size: '18sp'
+                bold: True
+                color: (0.85, 0.92, 1, 1)
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+                padding: [8, 0]
+
+        # PALETTE
         BoxLayout:
             id: palette_layout
             orientation: 'horizontal'
-            size_hint: (1, 0.15)
-            spacing: 10
+            size_hint: (1, 0.11)
+            spacing: 8
 
-        # 2. MIDDLE NET ZONE
+        # CUBE NET
         GridLayout:
             id: net_layout
-            size_hint: (1, 0.70)
+            size_hint: (1, 0.64)
             spacing: 2
 
-        # 3. BOTTOM BUTTONS ZONE
+        # BOTTOM BUTTONS
         BoxLayout:
             orientation: 'horizontal'
-            size_hint: (1, 0.15)
+            size_hint: (1, 0.11)
             spacing: 10
 
             Button:
-                text: "Back"
-                on_press: root.back_btnF()
-
-            Button:
-                text: "Reset Cube"
+                text: "Reset"
+                font_size: '14sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.reset_cube()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 18]
+                        width: 1.1
 
             Button:
                 text: "Continue To Solver"
+                font_size: '14sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (1, 1, 1, 1)
                 on_press: root.continue_to_solver()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]

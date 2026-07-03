@@ -5,50 +5,71 @@
     back_move_btn: back_move_btn
     next_btn: next_btn
 
+    canvas.before:
+        Color:
+            rgba: 0.05, 0.08, 0.15, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: 'vertical'
         spacing: 10
         padding: 10
 
-        # ---------------------------
-        # TOP NAVIGATION HEADER BAR
-        # ---------------------------
+        # HEADER BAR
         BoxLayout:
             orientation: 'horizontal'
-            size_hint: (1, 0.05)
+            size_hint: (1, 0.07)
+            spacing: 8
+            canvas.before:
+                Color:
+                    rgba: 0.08, 0.13, 0.25, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [12]
 
             Button:
-                text: "<--"
-                font_size: '24sp'
+                text: "<"
+                font_size: '20sp'
+                bold: True
                 size_hint_x: None
                 width: self.height
                 background_normal: ''
-                background_color: (0.2, 0.2, 0.2, 1)
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.go_back()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.35)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10]
 
             Label:
-                text: "3D Cube Solver Visualizer"
+                text: "3D Cube Solver"
                 font_size: '18sp'
+                bold: True
+                color: (0.85, 0.92, 1, 1)
                 halign: 'left'
                 valign: 'middle'
                 text_size: self.size
-                padding: [10, 0]
+                padding: [8, 0]
 
-        # ---------------------------
-        # FIXED WRAPPING SOLUTION LABEL
-        # ---------------------------
+        # SOLUTION LABEL
         Label:
             id: solution_label
             text: "Solution: "
             size_hint: (1, 0.17)
-            font_size: '16sp'
+            font_size: '14sp'
+            color: (0.6, 0.78, 1, 1)
             text_size: (self.width - 20, None)
             halign: 'center'
             valign: 'middle'
 
-        # ---------------------------
-        # VISUALIZER CANVAS WORKSPACE
-        # ---------------------------
+        # CANVAS
         Widget:
             id: canvas_area
             size_hint: (0.75, 0.35)
@@ -56,29 +77,71 @@
             on_pos: root.draw_cube()
             on_size: root.draw_cube()
 
-        # ---------------------------
-        # BOTTOM CONTROLS BAR
-        # ---------------------------
+        # BOTTOM CONTROLS
         BoxLayout:
             orientation: 'horizontal'
             size_hint: (1, 0.1)
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
             spacing: 10
 
             Button:
                 id: back_move_btn
-                text: "Back Move"
-                disabled: True       # Starts disabled
+                text: "Back"
+                disabled: True
+                font_size: '15sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.back_move()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2) if not self.disabled else (0.2, 0.2, 0.2, 0.3)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7) if not self.disabled else (0.3, 0.3, 0.3, 0.4)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 18]
+                        width: 1.1
 
             Button:
                 id: solve_btn
                 text: "Solve"
-                disabled: False
+                font_size: '15sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (1, 1, 1, 1)
                 on_press: root.solve_cube()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 1) if not self.disabled else (0.2, 0.25, 0.35, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]
 
             Button:
                 id: next_btn
-                text: "Next Move"
-                disabled: True       # Starts disabled
+                text: "Next"
+                disabled: True
+                font_size: '15sp'
+                bold: True
+                background_normal: ''
+                background_color: (0, 0, 0, 0)
+                color: (0.4, 0.75, 1, 1)
                 on_press: root.next_move()
+                canvas.before:
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.2) if not self.disabled else (0.2, 0.2, 0.2, 0.3)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [18]
+                    Color:
+                        rgba: (0.13, 0.42, 0.82, 0.7) if not self.disabled else (0.3, 0.3, 0.3, 0.4)
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 18]
+                        width: 1.1
