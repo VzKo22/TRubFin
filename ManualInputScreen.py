@@ -19,7 +19,6 @@ def is_valid_cube_string(s):
     if any(c not in allowed for c in s):
         return False, "Invalid colors detected"
 
-    # Must have exactly 9 of each color
     count = Counter(s)
     for c in allowed:
         if count[c] != 9:
@@ -27,7 +26,9 @@ def is_valid_cube_string(s):
 
     return True, ""
 
-
+""" ManualInputScreen კლასი, სადაც ხდება კუბის მატრიცაში მექანიკურად ხელით ფერების შეტანა.
+    აქვეა განსაზღვრული Button ღილაკებისა და კლასისთვის საჭირო ფუნქციონალი.
+    ამ კლასიდან ხდება CubeGUI კლასში გადასვლა კუბის 3D-ში წარმოსადგენად და ასაწყობად."""
 class ManualInputScreen(Screen):
     palette_layout = ObjectProperty(None)
     net_layout = ObjectProperty(None)
@@ -59,10 +60,6 @@ class ManualInputScreen(Screen):
         self._initialized = False
 
     def on_enter(self, *args):
-        """
-        Runs whenever the screen shifts into view. We delay layout generation
-        by 0.05 seconds to ensure Kivy's layout engine has finalized sizes.
-        """
         if not self._initialized:
             Clock.schedule_once(self.initialize_dynamic_layouts, 0.05)
             self._initialized = True
@@ -70,14 +67,12 @@ class ManualInputScreen(Screen):
             self.refresh_sticker_colors()
 
     def initialize_dynamic_layouts(self, _dt=None):
-        # Double check to prevent crashes if KV isn't ready
         if not self.palette_layout or not self.net_layout:
             return
 
         self.palette_layout.clear_widgets()
         self.net_layout.clear_widgets()
 
-        # 1. Populate Palette Buttons
         for color_name, rgba in self.colors.items():
             btn = Button(
                 background_normal='',
@@ -86,11 +81,9 @@ class ManualInputScreen(Screen):
             btn.bind(on_press=lambda inst, c=color_name: self.select_color(c))
             self.palette_layout.add_widget(btn)
 
-        # 2. Force grid rules
         self.net_layout.cols = 12
         self.net_layout.rows = 9
 
-        # 3. Build layout matrix stickers
         self.build_cube_net()
 
     def select_color(self, color):
@@ -200,19 +193,14 @@ class ManualInputScreen(Screen):
             self.show_toast(msg)
             return
 
-        # 1. Grab the CubeGUI screen directly from the manager
         cube_screen = self.manager.get_screen('cube')
 
-        # 2. Update its internal RubiksCube object data with the new string
         cube_screen.cube = RubiksCube(cube_string)
 
-        # 3. Reset the move solution steps index
         cube_screen.index = 0
         cube_screen.solution = []
         cube_screen.solution_label.text = "Solution: "
 
-        # 4. Clear the layout canvas and force a fresh frame draw
         cube_screen.draw_cube()
 
-        # 5. Switch over to the screen view
         self.manager.current = 'cube'

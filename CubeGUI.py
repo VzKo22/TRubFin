@@ -28,7 +28,7 @@ INVERSE_MOVES = {
 def draw_arrow(points, direction, _size):
     x1, y1, x2, y2, x3, y3, x4, y4 = points
 
-    # side centers
+    # კუთხეების ცენტრები
     top_cx = (x2 + x3) / 2
     top_cy = (y2 + y3) / 2
 
@@ -41,7 +41,7 @@ def draw_arrow(points, direction, _size):
     right_cx = (x3 + x4) / 2
     right_cy = (y3 + y4) / 2
 
-    # quad center
+    # კვადრატების ცენტრები
     cx = (x1 + x2 + x3 + x4) / 4
     cy = (y1 + y2 + y3 + y4) / 4
 
@@ -76,7 +76,10 @@ def draw_arrow(points, direction, _size):
                      right_cx, right_cy], width=1.4)
 
 
-class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
+""" CubeGUI კლასი, სადაც ხდება კუბის ფსევდო 3D ში წარმოდგენა და ვიზუალიზაცია.
+    ამ კლასში ხდება კუბის აწყობა და აწყობის დროს ჩნდება მოძრაობების ისრები, რომელთა მიხედვითაც იწყობა კუბი.
+    აქვეა განსაზღვრული Button ღილაკებისა და კლასისთვის საჭირო ფუნქციონალი """
+class CubeGUI(Screen):
     solution_label = ObjectProperty(None)
     canvas_area = ObjectProperty(None)
     solve_btn = ObjectProperty(None)
@@ -84,7 +87,7 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
     next_btn = ObjectProperty(None)
 
     def __init__(self, cube_string=None, **kwargs):
-        super().__init__(**kwargs)  # Passes screen routing parameters (like name='cube') safely
+        super().__init__(**kwargs)
         self.solution = []
         self.index = 0
 
@@ -138,7 +141,6 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
                 return
             else:
                 move = self.solution[self.index]
-                print(f"Move({self.index + 1}): {move}")
                 self.draw_cube(move)
                 self.cube.execute_move(move)
                 self.solution_label.text = f"Move {self.index + 1}/{len(self.solution)}: {move}"
@@ -154,10 +156,10 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
             self.cube.execute_move(inverse_move)
             self.draw_cube(move)
             self.solution_label.text = f"Move {self.index + 1}/{len(self.solution)}: {move}"
-            # Update button states
+
             self.next_btn.disabled = False
             if self.index == 0:
-                self.back_move_btn.disabled = True  # Gray out if we are back at the start
+                self.back_move_btn.disabled = True
 
     def go_back(self):
         if self.next_btn:
@@ -169,23 +171,20 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
             self.manager.current = 'menu'
 
     def draw_cube(self, move=None):
-        # CRITICAL GUARD: Stop code from running until Kivy maps the KV properties completely
         if not self.canvas_area:
             return
 
-        # Clears older canvas elements clean on refresh
         self.canvas_area.canvas.clear()
 
-        # Dynamically calculate size and position
         size = self.canvas_area.height / 6
-        dx_front = size * 0.85  # Slightly wider front
-        dx_right = size * 0.75  # Slightly narrower right
+        dx_front = size * 0.85
+        dx_right = size * 0.75
         dy = -size * 0.22
 
         origin_x = self.canvas_area.x + self.canvas_area.width / 2 - 3 * (dx_front + dx_right) / 2
         origin_y = self.canvas_area.y + self.canvas_area.height / 2 - 1.5 * size
 
-        # Top face
+        # ზედა მხარე
         for i in range(3):
             for j in range(3):
                 color = COLOR_MAP[self.cube.faces['U'][i][j]]
@@ -234,7 +233,7 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
                     elif move == "R'" and j == 2:
                         draw_arrow(pts, "L", size)
 
-        # Right face
+        # მარჯვენა მხარე
         for i in range(3):
             for j in range(3):
                 color = COLOR_MAP[self.cube.faces['R'][i][j]]
@@ -282,7 +281,7 @@ class CubeGUI(Screen):  # Subclass Screen instead of BoxLayout
                     elif move == "B'" and j == 2:
                         draw_arrow(pts, "D", size)
 
-        # Front face
+        # წინა მხარე
         for i in range(3):
             for j in range(3):
                 color = COLOR_MAP[self.cube.faces['F'][i][j]]

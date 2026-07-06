@@ -13,7 +13,7 @@ Config.set('graphics', 'width', '405')
 Config.set('graphics', 'height', '900')
 Config.set('graphics', 'resizable', False)
 
-
+""" CubeApp კლასი, სადაც იტვირთება .kv ფაილები UI-სთვის და  ხდება ეკრანების მართვა"""
 class CubeApp(App):
     def build(self):
         self.title = "Rubik's Cube"

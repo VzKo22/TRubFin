@@ -1,3 +1,5 @@
+""" RubiksCube კლასი, რომელიც ქმნის კუბის ობიექტს და ამზადებს ალგორითმისთვის გადასაცემ მდგომარეობას(String-ს).
+    აქვეა განსაზღვრული სტანდარტული მოძრაობებისა და მათი შებრუნებული(Prime) მოძრაობების ფუნქციონალი """
 class RubiksCube:
     def __init__(self, cubeState="WWWWWWWWWRRRRRRRRRGGGGGGGGGYYYYYYYYYOOOOOOOOOBBBBBBBBB"):
 
@@ -45,7 +47,7 @@ class RubiksCube:
 
         return CtF
 
-    # ---------- Utility -----------------
+    # ---------- დამხმარე ფუნქციები -----------------
     def rotate_face_cw(self, face):
         self.faces[face] = [list(x) for x in zip(*self.faces[face][::-1])]
 
@@ -53,9 +55,8 @@ class RubiksCube:
         self.faces[face] = [list(x) for x in zip(*self.faces[face])]
         self.faces[face].reverse()
 
-    # ---------- Moves -------------------
+    # ---------- მოძრაობები -------------------
     def execute_move(self, move):
-        """Execute a standard notation move string: X, X', or X2."""
         if move.endswith("2"):
             base = move[0]
             self._moves[base]()
@@ -63,7 +64,7 @@ class RubiksCube:
         else:
             self._moves[move]()
 
-    # ---- U (Up) ----
+    # ---- U (ზევით) ----
     def U(self):
         self.rotate_face_cw('U')
         temp = self.faces['F'][0][:]
@@ -76,7 +77,7 @@ class RubiksCube:
         for _ in range(3):
             self.U()
 
-    # ---- D (Down) ----
+    # ---- D (ქვევით) ----
     def D(self):
         self.rotate_face_cw('D')
         temp = self.faces['F'][2][:]
@@ -89,7 +90,7 @@ class RubiksCube:
         for _ in range(3):
             self.D()
 
-    # ---- L (Left) ----
+    # ---- L (მარცხნივ) ----
     def L(self):
         self.rotate_face_cw('L')
         temp = [row[0] for row in self.faces['F']]
@@ -106,7 +107,7 @@ class RubiksCube:
         for _ in range(3):
             self.L()
 
-    # ---- R (Right) ----
+    # ---- R (მარჯვნინ) ----
     def R(self):
         self.rotate_face_cw('R')
         temp = [row[2] for row in self.faces['F']]
@@ -123,7 +124,7 @@ class RubiksCube:
         for _ in range(3):
             self.R()
 
-    # ---- F (Front) ----
+    # ---- F (წინ) ----
     def F(self):
         self.rotate_face_cw('F')
         temp = self.faces['U'][2][:]
@@ -138,7 +139,7 @@ class RubiksCube:
         for _ in range(3):
             self.F()
 
-    # ---- B (Back) ----
+    # ---- B (უკან) ----
     def B(self):
         self.rotate_face_cw('B')
         temp = self.faces['U'][0][:]

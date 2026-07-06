@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen
 
-
+""" MenuScreen კლასი, რომელიც user-ს სთავაზობს მექანიკურად კუბის ფერების ხელით შეტანას ან სკანირებას"""
 class MenuScreen(Screen):
 
     def open_manual(self):

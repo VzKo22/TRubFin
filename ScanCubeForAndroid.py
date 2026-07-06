@@ -28,7 +28,9 @@ def detect_color(hsv):
         return 'B'
     return 'W'
 
-
+""" ScanCube კლასი, სადაც ხდება კუბის სკანირება OpenCV-ს გამოყენებით, 
+    რომელიც აღიქვამს ფერებს და გადასცემს მიღებულ მატრიცას ManualInputScreen-ს, 
+    რათა მოხდეს ხარვეზების გასწორება(ასეთის არსებობის შემთხვევაში) """
 class ScanCube(Screen):
     img = ObjectProperty(None)
     face_captured = BooleanProperty(False)
@@ -37,13 +39,10 @@ class ScanCube(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # Initialize camera as None. We only build it when permissions are ready.
         self.camera = None
-        # self.texture_out = None
         self.current_face_data = None
         self.captured_faces = {}
 
-        # STATE DATA
         self.scan_order = ['U', 'R', 'F', 'D', 'L', 'B']
 
         self.center_colors = {
@@ -63,14 +62,11 @@ class ScanCube(Screen):
         self.face_captured = False
 
         if platform == 'android':
-            # Check if permission is already granted
             if check_permission(Permission.CAMERA):
                 self.start_camera_stream()
             else:
-                # Ask user for permission dynamically
                 request_permissions([Permission.CAMERA], self.permission_callback)
         else:
-            # Desktop environments (Windows/macOS/Linux) don't need runtime prompts
             self.start_camera_stream()
 
     def permission_callback(self, _permissions, grants):
@@ -78,7 +74,6 @@ class ScanCube(Screen):
             self.start_camera_stream()
 
     def start_camera_stream(self):
-        """Safely instantiates and starts the camera hardware."""
         if not self.camera:
             self.camera = Camera(
                 play=False,
@@ -107,7 +102,6 @@ class ScanCube(Screen):
         if self.current_face_index >= len(self.scan_order):
             return
 
-        # Double check that camera exists and has populated a texture frame
         if not self.camera or self.camera.texture is None:
             return
 
@@ -122,13 +116,11 @@ class ScanCube(Screen):
 
         h, w = frame.shape[:2]
 
-        # GRID GEOMETRY
         size_grid = h // 3
         cell = size_grid // 3
         start_x = w // 2 - size_grid // 2
         start_y = h // 2 - size_grid // 2
 
-        # DRAW MATRIX LINES
         for i in range(4):
             cv2.line(frame, (start_x + i * cell, start_y), (start_x + i * cell, start_y + size_grid), (255, 255, 255),
                      2)
@@ -165,19 +157,14 @@ class ScanCube(Screen):
         face_data[1][1] = self.center_colors[face]
         self.current_face_data = face_data
 
-        # BLIT DATA TO SCREEN
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         buf = cv2.flip(frame, 0).tobytes()
 
-        # if self.texture_out is None:
-        #     self.texture_out = Texture.create(size=(w, h), colorfmt='rgb')
         texture_out = Texture.create(size=(w, h), colorfmt='rgb')
 
-        # self.texture_out.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
         texture_out.blit_buffer(buf, colorfmt='rgb', bufferfmt='ubyte')
 
         if self.img:
-            # self.img.texture = self.texture_out
             self.img.texture = texture_out
 
     def capture_face(self):
